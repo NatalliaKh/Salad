@@ -1,6 +1,6 @@
 package com.salad.vegetables.nightshade;
 
-import com.salad.Color;
+import com.salad.vegetables.Color;
 import com.salad.vegetables.Vegetable;
 
 public abstract class NightshadeVegetable extends Vegetable {
