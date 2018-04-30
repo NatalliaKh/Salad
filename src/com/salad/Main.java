@@ -41,7 +41,7 @@ public class Main {
             System.out.println(cookable.toString());
         }
         List<Cookable> filteredProducts = salad.findProducts(18, 23, 50, 120);
-        System.out.println("Найденые овощи:");
+        System.out.println("Найденые овощи с калориями от 18 до 23 и весом от 50 до 120 грамм:");
         for (Cookable cookable : filteredProducts) {
             System.out.println(cookable.toString());
         }
