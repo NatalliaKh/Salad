@@ -4,6 +4,8 @@ import com.salad.vegetables.Color;
 import com.salad.vegetables.exceptions.EmptySaladException;
 import com.salad.vegetables.exceptions.ProductsNotFoundException;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.util.*;
 
 public class Salad {
@@ -17,12 +19,16 @@ public class Salad {
         this.products = products;
     }
 
-    public void cook() {
-        System.out.println("Мы готовим салат:");
+    public void cook(BufferedWriter writer) throws IOException {
+        writer.write("Мы готовим салат:");
+        writer.newLine();
         for (Cookable product : products) {
-            product.cook();
+            product.cook(writer);
         }
-        System.out.println("Все перемешать\nПриятного аппетита!");
+        writer.write("Все перемешать");
+        writer.newLine();
+        writer.write("Приятного аппетита!");
+        writer.newLine();
     }
 
     public double getCalories() {

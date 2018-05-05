@@ -7,29 +7,29 @@ import com.salad.vegetables.nightshade.Pepper;
 import com.salad.vegetables.nightshade.Tomato;
 import com.salad.vegetables.pumpkin.Cucumber;
 
+import java.io.*;
 import java.util.*;
 
 public class Main {
 
     public static void main(String[] args) {
+        Scanner scanner = null;
+        BufferedWriter writer = null;
         try {
-            System.out.println("Введите количество томатов:");
-            Scanner scanner = new Scanner(System.in);
+            scanner = new Scanner(new File("input.txt"));
             int tomatoAmount = scanner.nextInt();
             if (tomatoAmount < 0) {
                 throw new InvalidVegetableAmountException("томатов");
             }
-            System.out.println("Введите количество огурцов:");
             int cucumberAmount = scanner.nextInt();
             if (cucumberAmount < 0) {
                 throw new InvalidVegetableAmountException("огурцов");
             }
-            System.out.println("Введите количество перца:");
             int peperAmount = scanner.nextInt();
             if (peperAmount < 0) {
                 throw new InvalidVegetableAmountException("перцев");
             }
-
+            scanner.close();
             Cookable[] products = new Cookable[tomatoAmount + cucumberAmount + peperAmount];
             int productAmount = 0;
             for (int i = 0; i < tomatoAmount; i++) {
@@ -48,18 +48,24 @@ public class Main {
                 products[productAmount] = new Pepper(getRandomWeight(50, 150));
                 productAmount++;
             }
+            writer = new BufferedWriter(new FileWriter("output.txt"));
             Salad salad = new Salad(products);
-            salad.cook();
-            System.out.printf("Калорийность вашего салата: %.2f калорий\n", salad.getCalories());
+            salad.cook(writer);
+            writer.write(String.format("Калорийность вашего салата: %.2f калорий", salad.getCalories()));
+            writer.newLine();
             Cookable[] sortedProducts = salad.sortProductsByWeight();
-            System.out.println("Отсортированные по весу овощи:");
+            writer.write("Отсортированные по весу овощи:");
+            writer.newLine();
             for (Cookable cookable : sortedProducts) {
-                System.out.println(cookable.toString());
+                writer.write(cookable.toString());
+                writer.newLine();
             }
+            writer.write("Найденые овощи с калориями от 18 до 23 и весом от 50 до 120 грамм:");
+            writer.newLine();
             List<Cookable> filteredProducts = salad.findProducts(18, 23, 50, 120);
-            System.out.println("Найденые овощи с калориями от 18 до 23 и весом от 50 до 120 грамм:");
             for (Cookable cookable : filteredProducts) {
-                System.out.println(cookable.toString());
+                writer.write(cookable.toString());
+                writer.newLine();
             }
         } catch (InputMismatchException e) {
             System.out.println("Некорректный ввод - ожидается числовое значение");
@@ -70,7 +76,28 @@ public class Main {
         } catch (NegativeArraySizeException e) {
             System.out.println("Размер массива не должен быть отрицательным");
         } catch (InvalidVegetableAmountException | ProductsNotFoundException | EmptySaladException e) {
-            System.out.println(e.getMessage());
+            try {
+                if (writer != null) {
+                    writer.write(e.getMessage());
+                }
+            } catch (IOException e1) {
+                System.out.println("Проблемы с записью в файл");
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("Файл не найден");
+        } catch (IOException e) {
+            System.out.println("Проблемы с записью в файл");
+        } finally {
+            if (scanner != null) {
+                scanner.close();
+            }
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                    System.out.println("Проблемы при закрытии файла");
+                }
+            }
         }
     }
 
