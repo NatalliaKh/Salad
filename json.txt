@@ -1,0 +1,5 @@
+{
+	"tomatoAmount":1,
+	"cucumberAmount":2,
+	"pepperAmount":5
+}

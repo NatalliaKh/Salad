@@ -1,5 +1,8 @@
 package com.salad;
 
+import com.salad.storage.DatabaseStorage;
+import com.salad.storage.JSONStorage;
+import com.salad.storage.StorageSource;
 import com.salad.vegetables.exceptions.EmptySaladException;
 import com.salad.vegetables.exceptions.InvalidVegetableAmountException;
 import com.salad.vegetables.exceptions.ProductsNotFoundException;
@@ -16,20 +19,26 @@ public class Main {
         Scanner scanner = null;
         BufferedWriter writer = null;
         try {
-            scanner = new Scanner(new File("input.txt"));
-            int tomatoAmount = scanner.nextInt();
+            System.out.println("Введите источник данных( 1 - база данных, 2 - json файл):");
+            scanner = new Scanner(System.in);
+            int userChoice = scanner.nextInt();
+            if (userChoice != 1 && userChoice != 2) {
+                throw new InputMismatchException();
+            }
+            StorageSource source = (userChoice == 1 ) ? new DatabaseStorage() : new JSONStorage();
+            int tomatoAmount = source.getTomatoAmount();
             if (tomatoAmount < 0) {
                 throw new InvalidVegetableAmountException("томатов");
             }
-            int cucumberAmount = scanner.nextInt();
+            int cucumberAmount = source.getCucumberAmount();
             if (cucumberAmount < 0) {
                 throw new InvalidVegetableAmountException("огурцов");
             }
-            int peperAmount = scanner.nextInt();
+            int peperAmount = source.getPepperAmount();
             if (peperAmount < 0) {
                 throw new InvalidVegetableAmountException("перцев");
             }
-            scanner.close();
+            source.cleanUp();
             Cookable[] products = new Cookable[tomatoAmount + cucumberAmount + peperAmount];
             int productAmount = 0;
             for (int i = 0; i < tomatoAmount; i++) {
